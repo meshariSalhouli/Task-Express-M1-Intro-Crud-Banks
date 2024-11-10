@@ -1,9 +1,6 @@
 const uuid4 = require("uuid4");
 const accounts = require("../../accounts");
 
-const accountList = (request, response) => {
-  response.status(200).json(accounts);
-};
 const accountDetail = (request, response) => {
   const foundAccount = accounts.find(
     (account) => account.id === request.params.accountsId
@@ -12,11 +9,14 @@ const accountDetail = (request, response) => {
     response.status(404).json({ message: "account not found" });
   response.status(200).json(foundAccount);
 };
-const accountDetail2 = (request, response) => {
+const accountList = (request, response) => {
+  const { accountName } = request.query;
+  if (!accountName) {
+    response.status(200).json(accounts);
+  }
   const foundAccount = accounts.find(
     (account) =>
-      account.username.toLowerCase() ===
-      request.params.accountName.toLocaleLowerCase()
+      account.username.toLowerCase() === accountName.toLocaleLowerCase()
   );
   if (!foundAccount)
     response.status(404).json({ message: "account not found" });
@@ -64,7 +64,6 @@ const deleteAccount = (request, response) => {
 module.exports = {
   accountList,
   accountDetail,
-  accountDetail2,
   updateAccount,
   deleteAccount,
   createAccount,
